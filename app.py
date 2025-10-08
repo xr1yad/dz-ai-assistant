@@ -13,14 +13,11 @@ st.set_page_config(page_title="المساعد الدراسي الجزائري", 
 st.title("🤖 المساعد الدراسي الجزائري الذكي")
 st.write("مرحبًا! أنا مساعدك الدراسي. اسألني أي سؤال من المناهج أو من الإنترنت التعليمي بالعربية 🇩🇿")
 
-# مفتاح Serper API (ضع مفتاحك هنا 👇)
-SERPER_API_KEY = "0fbd7aac9c335c9b56d7b2acfe40253bfe34f614"
-
 # نموذج ذكاء لغوي من Hugging Face (مجاني)
 import json
 
 # سنستخدم واجهة API من Hugging Face بدلاً من تشغيل النموذج محليًا
-HF_API_TOKEN = "ضع_رمز_HuggingFace_الذي_نسخته_هنا"
+HF_API_TOKEN = "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"
 
 def query_huggingface(prompt):
     api_url = "https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct"
@@ -92,7 +89,7 @@ if user_input:
 
         # 3. توليد الإجابة النهائية
         prompt = f"السؤال: {user_input}\n\nالمراجع:\n{context}\n\nأجب بالعربية الفصحى بإيجاز وبأسلوب واضح للطلاب."
-        answer = model(prompt)[0]['generated_text']
+        answer = query_huggingface(prompt)
 
         st.success("✏️ الإجابة:")
         st.write(answer)
