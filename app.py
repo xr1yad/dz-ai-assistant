@@ -17,7 +17,24 @@ st.write("مرحبًا! أنا مساعدك الدراسي. اسألني أي س
 SERPER_API_KEY = "0fbd7aac9c335c9b56d7b2acfe40253bfe34f614"
 
 # نموذج ذكاء لغوي من Hugging Face (مجاني)
-model = pipeline("text-generation", model="microsoft/phi-2", max_new_tokens=200)
+import json
+
+# سنستخدم واجهة API من Hugging Face بدلاً من تشغيل النموذج محليًا
+HF_API_TOKEN = "ضع_رمز_HuggingFace_الذي_نسخته_هنا"
+
+def query_huggingface(prompt):
+    api_url = "https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct"
+    headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
+    payload = {"inputs": prompt, "parameters": {"max_new_tokens": 300, "temperature": 0.6}}
+    response = requests.post(api_url, headers=headers, json=payload)
+    if response.status_code == 200:
+        result = response.json()
+        try:
+            return result[0]["generated_text"]
+        except Exception:
+            return json.dumps(result)
+    else:
+        return f"⚠️ حدث خطأ في واجهة Hugging Face API: {response.status_code}"
 
 # قاعدة بيانات المناهج
 DB_DIR = "chroma_db"
