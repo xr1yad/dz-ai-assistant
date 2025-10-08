@@ -1,0 +1,7 @@
+streamlit
+requests
+transformers
+sentence-transformers
+chromadb
+numpy
+Pillow
