@@ -36,7 +36,25 @@ def query_huggingface(prompt):
 # قاعدة بيانات المناهج
 DB_DIR = "chroma_db"
 os.makedirs(DB_DIR, exist_ok=True)
-embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+# دالة جديدة للحصول على تمثيلات النصوص (embeddings) من Hugging Face مجانًا
+HF_API_TOKEN = "ضع_رمز_HuggingFace_الذي_نسخته_من_قبل_هنا"
+
+def get_embeddings(texts):
+    api_url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+    headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
+    embeddings = []
+    for text in texts:
+        payload = {"inputs": text}
+        response = requests.post(api_url, headers=headers, json=payload)
+        if response.status_code == 200:
+            emb = response.json()
+            # نأخذ المتوسط لتقليل الحجم
+            emb_vector = np.mean(emb, axis=0)
+            embeddings.append(emb_vector)
+        else:
+            embeddings.append(np.zeros(384))  # fallback
+    return np.array(embeddings).astype("float32")
+
 client = chromadb.Client(Settings(persist_directory=DB_DIR))
 try:
     collection = client.get_collection("curriculum")
